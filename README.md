@@ -249,7 +249,7 @@ chosenPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0); // задерж
 chosenPort.closePort();
 ```
 ### Запись и считывание CSV
-Функция записи значений в таблицу
+Функция записи четырех значений в таблицу
 ```
     public static void writeToCSVObj(String name) throws InterruptedException {
         try {
@@ -283,6 +283,33 @@ chosenPort.closePort();
         }
     }
 ```
+Функция записи массива значений в таблицу
+```
+    public static void writeToCSVArray(String name) throws InterruptedException {
+        try {
+            String PathTillProject = System.getProperty("user.dir");
+            FileWriter csvWriter = new FileWriter(PathTillProject + "/src/main/SoundEthalon.csv", true);
+            jserialInput(2);
+            TimeUnit.SECONDS.sleep(4);
+            double[] real = jserialOutputArray();
+            String[] sendData = new String[real.length];
+            String separator = ",";
+            csvWriter.append(name);
+            csvWriter.append(separator);
+            for (int i = 0; i < real.length; i++) {
+                sendData[i] = String.valueOf(real[i]);
+                csvWriter.append(sendData[i]);
+                csvWriter.append(separator);
+            }
+            csvWriter.append("0");
+            csvWriter.append("\n");
+            csvWriter.flush();
+            csvWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    ```
 Пример использования 
 ```
 elements = driver.findElements(By.id("com.mediatek.overlay.tvsettings:id/preference_progress_value"));
