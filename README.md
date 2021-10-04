@@ -221,4 +221,26 @@ const double samplingFrequency = 38000; // частота сэмплирован
  ```
 <a id="chapter-2"></a>
 ## Считывание информации с ТВ и управление (Appium + Java), коммуникация тестового скрипта с Arduino
-
+### Коммуникация скрипта с Arduino
+Используется библиотека [jSerialComm](https://fazecast.github.io/jSerialComm/)
+Объявление номера порта в классе:
+```
+private static final String COMPORT = "/dev/ttyACM0"; //"COM4", Linux
+private static final String COMPORT = "COM4"; //Windows
+```
+Номер порта можно узнать через терминал в Arduino IDE.
+Объявление COM порта в классе:
+```
+private static SerialPort chosenPort;
+```
+Инициализация COM порта 
+```
+chosenPort = SerialPort.getCommPort(COMPORT);
+chosenPort.openPort();
+chosenPort.setBaudRate(9600); // установка символьной скорости передачи
+chosenPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0); // задержки передачи
+```
+Закрытие порта
+```
+chosenPort.closePort();
+```
