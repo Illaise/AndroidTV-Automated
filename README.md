@@ -351,7 +351,7 @@ chosenPort.closePort();
         return arrayDataOutput;
     }
 ```
-### Основные функции
+### Основные функции записи/считывания
 Отправка запроса на Arduino
 ```
     private static void jserialInput(int in) {
@@ -500,4 +500,68 @@ chosenPort.closePort();
         }
     }
 ```
-
+### Функции навигации
+Открытие тестовых видео в ютубе
+```
+    private static void equalizerFifth() {
+        driver_args.put("command", "am start -a ");
+        driver_args.put("args", Lists.newArrayList("android.intent.action.VIEW \"https://youtu.be/ZjtKR9uQvqs?t=11\""));
+        try {
+            driver.executeScript("mobile:shell", driver_args);
+        } catch (NullPointerException e) {
+            System.out.println("(!) Something went wrong with the script...");
+            System.exit(1);
+            dpad(AndroidKey.DPAD_DOWN);
+        }
+    }
+```
+Упрощение нажатия кнопок пульта
+```
+    private static void dpad(AndroidKey key) {
+        driver.pressKey(new KeyEvent(key));
+    }
+```
+Открытие настроек через активити
+```
+    private static void startSettings() {
+        driver_args.put("command", "am start -n ");
+        driver_args.put("args", Lists.newArrayList("com.android.tv.settings/com.android.tv.settings.MainSettings"));
+        try {
+            driver.executeScript("mobile:shell", driver_args);
+        } catch (NullPointerException e) {
+            System.out.println("(!) Something went wrong with the script...");
+            System.exit(1);
+            dpad(AndroidKey.DPAD_DOWN);
+        }
+    }
+```
+Поиск элемента по изображению
+```
+    private static MobileElement findElementByImage(String using) {
+        try {
+            return driver.findElementByImage(using);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+```
+Поиск элемента по ID
+```
+    private static AndroidElement findElementWrapper(String using) {
+        try {
+            return driver.findElement(By.id(using));
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+```
+Поиск элемента по тексту
+```
+    private static AndroidElement findElementByXPathWrapper(String using) {
+        try {
+            return driver.findElementByXPath(using);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+```
