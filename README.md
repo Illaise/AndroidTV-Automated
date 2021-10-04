@@ -254,19 +254,18 @@ chosenPort.closePort();
     public static void writeToCSVObj(String name) throws InterruptedException {
         try {
             String PathTillProject = System.getProperty("user.dir");
-            FileWriter csvWriter = new FileWriter(PathTillProject + "/src/main/ImageFirstEthalon.csv", true);
-            JSONObject obj;
-            obj = jserialOutputObj();
+            FileWriter csvWriter = new FileWriter(PathTillProject + "/src/main/SoundEthalon.csv", true); //объявляем класс FileWriter и указываем путь создания и записи таблицы
+            JSONObject obj = jserialOutputObj(); // запрос данных с ардуино
             TimeUnit.SECONDS.sleep(2);
             double luminanceR = obj.getDouble("lumR");
             double luminanceG = obj.getDouble("lumG");
             double luminanceB = obj.getDouble("lumB");
             double luminanceW = obj.getDouble("lumW");
-            String lumR = Double.toString(luminanceR);
+            String lumR = Double.toString(luminanceR); // превращаем числовые значения в стринги и записываем в переменные
             String lumG = Double.toString(luminanceG);
             String lumB = Double.toString(luminanceB);
             String lumW = Double.toString(luminanceW);
-            csvWriter.append(name);
+            csvWriter.append(name); //название настройки
             csvWriter.append(",");
             csvWriter.append(lumR);
             csvWriter.append(",");
@@ -288,33 +287,39 @@ chosenPort.closePort();
     public static void writeToCSVArray(String name) throws InterruptedException {
         try {
             String PathTillProject = System.getProperty("user.dir");
-            FileWriter csvWriter = new FileWriter(PathTillProject + "/src/main/SoundEthalon.csv", true);
-            jserialInput(2);
+            FileWriter csvWriter = new FileWriter(PathTillProject + "/src/main/SoundEthalon.csv", true); //объявляем класс FileWriter и указываем путь создания и записи таблицы
             TimeUnit.SECONDS.sleep(4);
-            double[] real = jserialOutputArray();
+            double[] real = jserialOutputArray(); // запрос данных с ардуино
             String[] sendData = new String[real.length];
-            String separator = ",";
-            csvWriter.append(name);
-            csvWriter.append(separator);
+            String separator = ","; 
+            csvWriter.append(name); //название настройки
+            csvWriter.append(separator); //разделитель
             for (int i = 0; i < real.length; i++) {
-                sendData[i] = String.valueOf(real[i]);
-                csvWriter.append(sendData[i]);
-                csvWriter.append(separator);
-            }
+                sendData[i] = String.valueOf(real[i]); // превращаем числовые значения в стринги и записываем в массив стрингов
+                csvWriter.append(sendData[i]); // запись эелемента массива в таблицу
+                csvWriter.append(separator); // разделитель после каждой итерации
+            } 
             csvWriter.append("0");
-            csvWriter.append("\n");
-            csvWriter.flush();
+            csvWriter.append("\n"); //следующая строка
+            csvWriter.flush(); //очистка ввода
             csvWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 ```
-Пример использования 
+Функция чтения переменных
 ```
-elements = driver.findElements(By.id("com.mediatek.overlay.tvsettings:id/preference_progress_value"));
-if (elements.get(0).getText().equals("100")) {
-writeToCSVObj("RED_GAIN_100");
-}
+    public static List<String[]> getCVSFileContents(String path) { //path - путь к таблице
+        List<String[]> content = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) { //инициализируем чтение из таблицы
+            String line = "";
+            while ((line = br.readLine()) != null) { //пока значения в строке на закончатся
+                content.add(line.split(",")); // записываем данные в список через запятую
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
 ```
-    
