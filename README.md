@@ -248,7 +248,7 @@ chosenPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0); // задерж
 ```
 chosenPort.closePort();
 ```
-### Запись и считывание CSV
+### Запись и чтение CSV
 Функция записи четырех значений в таблицу
 ```
     public static void writeToCSVObj(String name) throws InterruptedException {
@@ -308,7 +308,7 @@ chosenPort.closePort();
         }
     }
 ```
-Функция чтения переменных
+Функция чтения переменных из таблицы
 ```
     public static List<String[]> getCVSFileContents(String path) { //path - путь к таблице
         List<String[]> content = new ArrayList<>();
@@ -323,3 +323,181 @@ chosenPort.closePort();
         return content;
     }
 ```
+Функции чтения массивов из таблицы
+```
+    // get excel array from arduino
+    private static double[] exelOutputArray(int rowCount, List<String[]> contents) {
+        double[] arrayDataSheet = new double[17];
+        String[] row = contents.get(rowCount);
+        for (int i = 1; i < arrayDataSheet.length; ++i) {
+            arrayDataSheet[i] = Double.parseDouble(row[i]);
+            //System.out.println(arrayDataSheet[i]);
+        }
+        return arrayDataSheet;
+    }
+
+    //  write exel output to array
+    private static double[] exelVal(int rowCount, List<String[]> contents) {
+        double[] arrayDataSheet = exelOutputArray(rowCount, contents);
+        double[] arrayDataOutput = new double[16];
+        for (int i = 0; i < arrayDataOutput.length; i++) {
+            for (int j = 1; j < arrayDataSheet.length; j++) {
+                if (j == i + 1) {
+                    arrayDataOutput[i] = arrayDataSheet[j];
+                    //System.out.println(arrayDataOutput[i]);
+                }
+            }
+        }
+        return arrayDataOutput;
+    }
+```
+### Основные функции
+Отправка запроса на Arduino
+```
+    private static void jserialInput(int in) {
+        PrintWriter output = new PrintWriter(chosenPort.getOutputStream());
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+        output.print(in);
+        output.flush();
+    }
+```
+Принятие данных с Arduino (переменные)
+```
+    private static JSONObject jserialOutputObj() {
+        for (int i = 0; i < 3; i++) {
+            String genuino = null; //переменная для записи вывода с ардуино
+            jserialInput(10); // запрос на данные
+            try {
+                TimeUnit.SECONDS.sleep(4);
+                input = new BufferedReader(new InputStreamReader(chosenPort.getInputStream())); //инициалиируем получение данных
+                genuino = input.readLine(); //записываем в строку
+                System.out.println(genuino);
+                InputStream comPortInput = chosenPort.getInputStream();
+                comPortInput.skip(comPortInput.available()); //скипаем, если данные не пришли
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                JSONObject obj = new JSONObject(genuino); //записывем в жсон объект для дальнейшей обработки
+                return obj;
+            } catch (org.json.JSONException exception) {
+                if (jserialOutputObj().has("lumR") && jserialOutputObj().has("lumG") &&
+                        jserialOutputObj().has("lumB") && jserialOutputObj().has("lumW")) {
+                    continue; //если данные полные, закрываем цикл
+                }
+            }
+        }
+        return null;
+    }
+```
+Принятие данных с Arduino (массив)
+```
+    private static double[] jserialOutputArray() {
+        for (int r = 0; r < 5; r++) {
+            String arduino = "";
+            jserialInput(2);
+            try {
+                TimeUnit.SECONDS.sleep(3);
+                BufferedReader input = new BufferedReader(new InputStreamReader(chosenPort.getInputStream()));
+                arduino = input.readLine();
+                InputStream comPortInput = chosenPort.getInputStream();
+                comPortInput.skip(comPortInput.available());
+                Thread.sleep(100);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                JSONObject obj = new JSONObject(arduino);
+                JSONArray arr = obj.getJSONArray("Harmonic");
+                if (arr == null) {/*.....*/ }
+                double[] numbers = new double[arr.length()];
+                for (int i = 0; i < arr.length(); ++i) {
+                    numbers[i] = arr.optDouble(i);
+                }
+                return numbers;
+            } catch (org.json.JSONException exception) {
+                continue;
+            }
+        }
+        return null;
+    }
+```
+Сравнение реальных и эталонных показателей (переменные)
+```
+    private static boolean objScreenVal(int rowCount, List<String[]> content) throws InterruptedException {
+        JSONObject obj;
+        boolean result = false;
+        int rep = 1;
+        String[] row = content.get(rowCount);
+
+        double luminanceRTrue = Double.parseDouble(row[1]);
+        double luminanceGTrue = Double.parseDouble(row[2]);
+        double luminanceBTrue = Double.parseDouble(row[3]);
+        double luminanceWTrue = Double.parseDouble(row[4]);
+        obj = jserialOutputObj();
+        TimeUnit.SECONDS.sleep(2);
+        double luminanceR = obj.getDouble("lumR");
+        double luminanceG = obj.getDouble("lumG");
+        double luminanceB = obj.getDouble("lumB");
+        double luminanceW = obj.getDouble("lumW");
+        if (luminanceRTrue - luminanceR <= 1 && luminanceRTrue - luminanceR >= -1 && luminanceGTrue - luminanceG <= 1 && luminanceGTrue - luminanceG >= -1 && luminanceBTrue - luminanceB <= 1 && luminanceBTrue - luminanceB >= -1 && luminanceWTrue - luminanceW <= 1 && luminanceWTrue - luminanceW >= -1) {
+            result = true;
+        }
+        return result;
+    }
+```
+Сравнение реальных и эталонных показателей (массив)
+```
+    private static boolean ArrayScreenVaL(int rowCount) {
+        double diff;
+        double[] ethalon = exelVal(rowCount, soundEthalonVal);
+        double[] real = jserialOutputArray();
+        if (real == null) return false;
+        boolean avl = false;
+        for (int i = 0; i < real.length; i++) {
+            for (int j = 0; j < ethalon.length; j++) {
+                if (j == i) {
+                    diff = (ethalon[j] - real[i]);
+                    System.out.println(diff);
+                    if (diff <= 100 && diff >= -100) {
+                        avl = true;
+                    }
+                }
+            }
+        }
+        return avl;
+    }
+```
+Вывод результата
+```
+    private static void LegendsFallObj(String Passed, String Failed, int rowCount, List<String> report) throws InterruptedException {
+        boolean passFlag = objScreenVal(rowCount, soundEthalonVal);
+        if (passFlag) {
+            System.out.println(Passed);
+            report.add("(+) " + Passed);
+        } else {
+            System.out.println(Failed);
+            report.add("(-) " + Failed);
+        }
+    }
+
+    public static void LegendsFallArray(String Passed, String Failed, int rowCount, List<String> report) throws InterruptedException {
+        boolean passFlag = ArrayScreenVaL(rowCount);
+        if (passFlag) {
+            System.out.println(Passed);
+            report.add("(+) " + Passed);
+        } else {
+            System.out.println(Failed);
+            report.add("(-) " + Failed);
+        }
+    }
+```
+
