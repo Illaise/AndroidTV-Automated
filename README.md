@@ -221,6 +221,10 @@ const double samplingFrequency = 38000; // частота сэмплирован
  ```
 <a id="chapter-2"></a>
 ## Считывание информации с ТВ и управление (Appium + Java), коммуникация тестового скрипта с Arduino
+### Принцип работы скрипта
+Существует 2 вида тестовых скриптов:
+1. Тренировочный - частично повторяет действия рабочего скрипта, изменяет настройки звука, изображения и т.д и записывает эталонные показания с анализирующего устройства в CSV таблицу. Это позволяет легко подстраивать скрипт под разные экраны. Используется на ПО с правильными настройками звука / изображения.
+2. Рабочий - имитирует мануальные действия с пультом по построенному скрипту, проверяет функционал ТВ, если тестируються внешние параметры ТВ (звук, изображение) снимает показатели с анализирующего устройства и сравнивает их с эталонными показателями из CSV таблицы.
 ### Коммуникация скрипта с Arduino
 Используется библиотека [jSerialComm](https://fazecast.github.io/jSerialComm/)
 Объявление номера порта в классе:
@@ -244,3 +248,46 @@ chosenPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0); // задерж
 ```
 chosenPort.closePort();
 ```
+### Запись и считывание CSV
+Функция записи значений в таблицу
+```
+    public static void writeToCSVObj(String name) throws InterruptedException {
+        try {
+            String PathTillProject = System.getProperty("user.dir");
+            FileWriter csvWriter = new FileWriter(PathTillProject + "/src/main/ImageFirstEthalon.csv", true);
+            JSONObject obj;
+            obj = jserialOutputObj();
+            TimeUnit.SECONDS.sleep(2);
+            double luminanceR = obj.getDouble("lumR");
+            double luminanceG = obj.getDouble("lumG");
+            double luminanceB = obj.getDouble("lumB");
+            double luminanceW = obj.getDouble("lumW");
+            String lumR = Double.toString(luminanceR);
+            String lumG = Double.toString(luminanceG);
+            String lumB = Double.toString(luminanceB);
+            String lumW = Double.toString(luminanceW);
+            csvWriter.append(name);
+            csvWriter.append(",");
+            csvWriter.append(lumR);
+            csvWriter.append(",");
+            csvWriter.append(lumG);
+            csvWriter.append(",");
+            csvWriter.append(lumB);
+            csvWriter.append(",");
+            csvWriter.append(lumW);
+            csvWriter.append("\n");
+            csvWriter.flush();
+            csvWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+```
+Пример использования 
+```
+elements = driver.findElements(By.id("com.mediatek.overlay.tvsettings:id/preference_progress_value"));
+if (elements.get(0).getText().equals("100")) {
+writeToCSVObj("RED_GAIN_100");
+}
+```
+    
