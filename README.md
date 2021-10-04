@@ -216,8 +216,9 @@ const double samplingFrequency = 38000; // частота сэмплирован
  numbers[i] = {vData[i]}; //save calcuated magnnitudes data to array
  doc["Harmonic"][i] = map(numbers[i], 0, 1000, 0, 100); // creating json based on array
  serializeJson(doc, Serial);
- Serial.println(); ```
- 
- <a id="chapter-3"></a>
+ Serial.println();
+
+ ```
+<a id="chapter-2"></a>
 ## Считывание информации с ТВ и управление (Appium + Java), коммуникация тестового скрипта с Arduino
 
