@@ -224,7 +224,7 @@ const double samplingFrequency = 38000; // частота сэмплирован
 ### Принцип работы скрипта
 Существует 2 вида тестовых скриптов:
 1. Тренировочный - частично повторяет действия рабочего скрипта, изменяет настройки звука, изображения и т.д и записывает эталонные показания с анализирующего устройства в CSV таблицу. Это позволяет легко подстраивать скрипт под разные экраны. Используется на ПО с правильными настройками звука / изображения.
-2. Рабочий - имитирует мануальные действия с пультом по построенному скрипту, проверяет функционал ТВ, если тестируються внешние параметры ТВ (звук, изображение) снимает показатели с анализирующего устройства и сравнивает их с эталонными показателями из CSV таблицы.
+2. Рабочий - имитирует мануальные действия с пультом по построенному скрипту, проверяет функционал ТВ, если тестируются внешние параметры ТВ (звук, изображение) снимает показатели с анализирующего устройства и сравнивает их с эталонными показателями из CSV таблицы.
 ### Коммуникация скрипта с Arduino
 Используется библиотека [jSerialComm](https://fazecast.github.io/jSerialComm/)
 Объявление номера порта в классе:
@@ -500,7 +500,21 @@ chosenPort.closePort();
         }
     }
 ```
-### Функции навигации
+### Функции навигации и подключения
+Коннект к ТВ
+```
+    public static void connect() throws MalformedURLException {
+        DesiredCapabilities dc = new DesiredCapabilities();
+        dc.setCapability("deviceName", TVName);
+        dc.setCapability("noReset", "true");
+        dc.setCapability("platformName", "Android");
+        dc.setCapability("platformVersion", "9");
+        URL url = new URL("http://127.0.0.1:4723/wd/hub");
+        driver = new AndroidDriver<AndroidElement>(url, dc);
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        System.out.println("Application started....");
+    }
+```
 Открытие тестовых видео в ютубе
 ```
     private static void equalizerFifth() {
