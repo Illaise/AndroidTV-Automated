@@ -1495,7 +1495,6 @@ public class soundTraining {
         try {
             String PathTillProject = System.getProperty("user.dir");
             FileWriter csvWriter = new FileWriter(PathTillProject + "/src/main/SoundEthalon.csv", true);
-            jserialInput(2);
             TimeUnit.SECONDS.sleep(4);
             double[] real = jserialOutputArray();
             String[] sendData = new String[real.length];
