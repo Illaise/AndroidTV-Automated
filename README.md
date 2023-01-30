@@ -26,7 +26,7 @@
 
 ![i2c](https://github.com/Illaise/AndroidTV-Automated/blob/master/Phts/sjZNV.png)
 
-Для BH1750 код написан без использования библиотек, для MAXX44009 используеться библиотека https://github.com/RobTillaart/Max44009. 
+Для BH1750 код написан на основе скетчка считывания от [Wolles](https://wolles-elektronikkiste.de/en/bh1750fvi-gy-30-302-ambient-light-sensor), для MAXX44009 используеться библиотека [Max44009](https://github.com/RobTillaart/Max44009). 
 
 Часть MAXX44009:
 ```
@@ -54,7 +54,7 @@ uint32_t interval = 1000;
       getLux(2);
     }
   ```
-  Данные с датчиков передаються в формате json, с помощью библиотеки https://arduinojson.org/
+  Данные с датчиков передаються в формате json, с помощью библиотеки [ArduinoJson](https://arduinojson.org/)
   ```
     if (jsonStyle == 1) {
     float lumAll[] = {lumR, lumG, lumB, lumW};
