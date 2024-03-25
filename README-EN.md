@@ -434,37 +434,29 @@ private static double[] jserialOutputArray() {
     return null;
 }
 ```
-private static double[] jserialOutputArray() {
-    for (int r = 0; r < 5; r++) {
-        String arduino = "";
-        jserialInput(2);
-        try {
-            TimeUnit.SECONDS.sleep(3);
-            BufferedReader input = new BufferedReader(new InputStreamReader(chosenPort.getInputStream()));
-            arduino = input.readLine();
-            InputStream comPortInput = chosenPort.getInputStream();
-            comPortInput.skip(comPortInput.available());
-            Thread.sleep(100);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
+Comparison of actual and reference parameters (variables):
+```
+    private static boolean objScreenVal(int rowCount, List<String[]> content) throws InterruptedException {
+        JSONObject obj;
+        boolean result = false;
+        int rep = 1;
+        String[] row = content.get(rowCount);
+
+        double luminanceRTrue = Double.parseDouble(row[1]);
+        double luminanceGTrue = Double.parseDouble(row[2]);
+        double luminanceBTrue = Double.parseDouble(row[3]);
+        double luminanceWTrue = Double.parseDouble(row[4]);
+        obj = jserialOutputObj();
+        TimeUnit.SECONDS.sleep(2);
+        double luminanceR = obj.getDouble("lumR");
+        double luminanceG = obj.getDouble("lumG");
+        double luminanceB = obj.getDouble("lumB");
+        double luminanceW = obj.getDouble("lumW");
+        if (luminanceRTrue - luminanceR <= 1 && luminanceRTrue - luminanceR >= -1 && luminanceGTrue - luminanceG <= 1 && luminanceGTrue - luminanceG >= -1 && luminanceBTrue - luminanceB <= 1 && luminanceBTrue - luminanceB >= -1 && luminanceWTrue - luminanceW <= 1 && luminanceWTrue - luminanceW >= -1) {
+            result = true;
         }
-        try {
-            JSONObject obj = new JSONObject(arduino);
-            JSONArray arr = obj.getJSONArray("Harmonic");
-            if (arr == null) { /*.....*/ }
-            double[] numbers = new double[arr.length()];
-            for (int i = 0; i < arr.length(); ++i) {
-                numbers[i] = arr.optDouble(i);
-            }
-            return numbers;
-        } catch (org.json.JSONException exception) {
-            continue;
-        }
+        return result;
     }
-    return null;
-}
 ```
 Comparison of actual and reference values (variables):
 ```
@@ -513,7 +505,6 @@ private static boolean ArrayScreenVaL(int rowCount) {
 }
 ```
 Outputting the result:
-```
 private static void LegendsFallObj(String Passed, String Failed, int rowCount, List<String> report) throws InterruptedException {
     boolean passFlag = objScreenVal(rowCount, soundEthalonVal);
     if (passFlag) {
