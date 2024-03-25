@@ -221,8 +221,8 @@ const double samplingFrequency = 38000; // sampling frequency (frequency spectru
  ```
 <a id="chapter-2"></a>
 
-### Reading information from the TV and control (Appium + Java), communication of test script with Arduino
-## Script Operation Principle
+## Reading information from the TV and control (Appium + Java), communication of test script with Arduino
+### Script Operation Principle
 There are 2 types of test scripts:
 1. Training script - partially repeats the actions of the working script, modifies sound settings, images, etc., and records reference values from the analyzing device into a CSV table. 
 This allows easy adjustment of the script for different screens. It is used on software with correct sound/image settings.
