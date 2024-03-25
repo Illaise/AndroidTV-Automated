@@ -608,11 +608,11 @@ private static AndroidElement findElementByXPathWrapper(String using) {
     }
 }
 ```
-<a id="chapter-3"></a>
-## Принцип анализа характеристик
-The device operates in two modes - training mode and testing mode. In training mode, the test script repeats all actions performed in testing mode. The main difference is that in training mode, the data is recorded in a CSV database, which serves as the reference values for the characteristics captured from a specific TV model. This allows testing TVs with different factory settings. In testing mode, the real-time measurements are compared with the reference values from the database. The main goal of the device is to verify the correctness of the factory settings after updating the firmware (essentially, it is an automated colorimeter + noise meter with additional functions). The device must be placed in a strictly fixed position and be adjacent to the screen. The results of visual tests will be influenced by factors such as the working voltage of the TV's connection network, uniformity of the TV screen backlighting, factory defects, etc. The results of sound testing will be influenced by factors such as the noise insulation of the testing environment, external noises from the TV (factory defects). The results of connecting external devices and their visual characteristics will be influenced by the quality of the connection of external devices.
-<a id="#chapter-4"></a>
 
+<a id="chapter-3"></a>
+## The principle of characteristics analysis
+The device operates in two modes - training mode and testing mode. In training mode, the test script repeats all actions performed in testing mode. The main difference is that in training mode, the data is recorded in a CSV database, which serves as the reference values for the characteristics captured from a specific TV model. This allows testing TVs with different factory settings. In testing mode, the real-time measurements are compared with the reference values from the database. The main goal of the device is to verify the correctness of the factory settings after updating the firmware (essentially, it is an automated colorimeter + noise meter with additional functions). The device must be placed in a strictly fixed position and be adjacent to the screen. The results of visual tests will be influenced by factors such as the working voltage of the TV's connection network, uniformity of the TV screen backlighting, factory defects, etc. The results of sound testing will be influenced by factors such as the noise insulation of the testing environment, external noises from the TV (factory defects). The results of connecting external devices and their visual characteristics will be influenced by the quality of the connection of external devices.
+<a id="chapter-4"></a>
 ## Description of the Case and Connections
 ![Front view](https://github.com/Illaise/AndroidTV-Automated/blob/master/Phts/1.png)
 
