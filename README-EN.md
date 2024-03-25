@@ -620,6 +620,7 @@ Each sensor receives light of one of the primary colors. As a result, we have a 
 ![Bottom view](https://github.com/Illaise/AndroidTV-Automated/blob/master/Phts/2.png)
 
 Inside, there are stands for fixing Arduino boards, wires, and other device components.
+
 ![Rear View](https://github.com/Illaise/AndroidTV-Automated/blob/master/Phts/4.png)
 
 At the rear of the case, there are openings for connecting USB cables and power supply. Inside, there are stands for fixing Arduino boards, wires, and other device components.
