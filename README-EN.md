@@ -1,5 +1,5 @@
 ![logo](https://github.com/Illaise/AndroidTV-Automated/blob/master/Phts/logo.jpg)
-# **Android TV 9/11 Testing Project**
+# **Android TV 9/11 Automated testing Project**
 + [Project Description](#chapter-0)
 + [External Analysis Device / Hardware - Software Part](#chapter-1)
 + [Reading information from TV and control (Appium + Java), test script communication with Arduino](#chapter-2)
